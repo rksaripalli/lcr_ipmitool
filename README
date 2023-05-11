@@ -396,16 +396,21 @@ ipmievd: Memory Sensor 01 - Correctable ECC
 Resources
 =========
 IPMItool homepage
-http://github.com/ipmitool/ipmitool
+http://codeberg.org/IPMITool/ipmitool
 
 IPMItool manpage
-https://github.com/ipmitool/ipmitool/blob/master/doc/ipmitool.1.in
+https://codeberg.org/IPMITool/ipmitool/src/branch/master/doc/ipmitool.1.in
+
+IPMItool bugtracker (and archives):
+https://codeberg.org/IPMITool/ipmitool/issues
+https://github.com/ipmitool/ipmitool/issues (2018/08 to 2023/03)
+https://sourceforge.net/p/ipmitool/bugs/ (up to 2018/08)
+
+IPMItool commit archive
+https://lists.sourceforge.net/lists/listinfo/ipmitool-cvs
 
 Intelligent Platform Management Interface specification
 https://www.intel.com/content/www/us/en/servers/ipmi/ipmi-home.html
 
 OpenIPMI project: Linux IPMI kernel driver and userland library
 http://openipmi.sourceforge.net
-
-IPMItool commit archive
-https://lists.sourceforge.net/lists/listinfo/ipmitool-cvs
