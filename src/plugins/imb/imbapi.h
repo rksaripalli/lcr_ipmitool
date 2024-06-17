@@ -4,33 +4,33 @@
 //      $Revision: 1.2 $
 //      $Modtime:   Jul 22 2002 16:40:32  $
 //      $Author: iceblink $
-// 
+//
 //  Combined include files needed for imbapi.c
 //
  *M*/
-/*----------------------------------------------------------------------* 
-The BSD License 
+/*----------------------------------------------------------------------*
+The BSD License
 Copyright (c) 2002, Intel Corporation
 All rights reserved.
-Redistribution and use in source and binary forms, with or without 
+Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are met:
-  a.. Redistributions of source code must retain the above copyright notice, 
-      this list of conditions and the following disclaimer. 
+  a.. Redistributions of source code must retain the above copyright notice,
+      this list of conditions and the following disclaimer.
   b.. Redistributions in binary form must reproduce the above copyright notice,
-      this list of conditions and the following disclaimer in the documentation 
-      and/or other materials provided with the distribution. 
-  c.. Neither the name of Intel Corporation nor the names of its contributors 
-      may be used to endorse or promote products derived from this software 
-      without specific prior written permission. 
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
-ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED 
-WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE 
-DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR 
-ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES 
-(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; 
-LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON 
-ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT 
-(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS 
+      this list of conditions and the following disclaimer in the documentation
+      and/or other materials provided with the distribution.
+  c.. Neither the name of Intel Corporation nor the names of its contributors
+      may be used to endorse or promote products derived from this software
+      without specific prior written permission.
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
+ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *----------------------------------------------------------------------*/
 
@@ -50,7 +50,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #ifndef NULL
 #define NULL 0
 #endif
-#ifndef WIN32   
+#ifndef WIN32
 /* WIN32 defines this in stdio.h */
 #include <wchar.h>
 #endif
@@ -192,7 +192,7 @@ typedef	HANDLE	*PHANDLE;
  * Linux drivers expect ioctls defined using macros defined in ioctl.h.
  * So, instead of using the CTL_CODE defined for NT and UW, I define CTL_CODE
  * using these macros. That way imb_if.h, where the ioctls are defined get
- * to use the correct ioctl command we expect. 
+ * to use the correct ioctl command we expect.
  * Notes: I am using the generic _IO macro instead of the more specific
  * ones. The macros expect 8bit entities, so I am cleaning what is sent to
  * us from imb_if.h  - Mahendra
@@ -259,8 +259,8 @@ typedef struct _IO_STATUS_BLOCK {
  * This is the structure passed in to the IOCTL_IMB_SHUTDOWN_CODE request
  */
 typedef struct {
-	int	code;		
-	int	delayTime;  
+	int	code;
+	int	delayTime;
 } ShutdownCmdBuffer;
 #define		SD_NO_ACTION				0
 #define		SD_RESET				1
@@ -281,7 +281,7 @@ typedef struct {
 	BYTE cmd;
 	BYTE data[1];
 } ATTRIBUTE_PACKING ImbPacket;
-#define MIN_IMB_PACKET_SIZE	7 	
+#define MIN_IMB_PACKET_SIZE	7
 #define MAX_IMB_PACKET_SIZE	33
 /*
  * This is the standard IMB response format where the first byte of
@@ -307,22 +307,22 @@ typedef struct {
 //  Purpose:    Structure definition for holding IMB message data
 //  Context:    Used by SendTimedImbpMessage and SendTimedI2cMessge
 //              functions in the library interface. In use, it is overlayed on a
-//				char buffer of size MIN_IMB_REQ_BUF_SIZE + 
-//  Fields:     
+//				char buffer of size MIN_IMB_REQ_BUF_SIZE +
+//  Fields:
 //              respBufSize     size of the response buffer
 //
-//              timeout         timeout value in milli seconds   
-//                     
+//              timeout         timeout value in milli seconds
+//
 //              req		body of request to send
-//              
-*D*/			
+//
+*D*/
 typedef struct {
 	BYTE rsSa;
 	BYTE cmd;
 	BYTE netFn;
-	BYTE rsLun;	
+	BYTE rsLun;
 	BYTE dataLength;
-	BYTE data[1];	
+	BYTE data[1];
 } ATTRIBUTE_PACKING ImbRequest;
 typedef struct {
    DWORD	flags;			/* request flags*/
@@ -336,18 +336,18 @@ typedef struct {
  ************************/
 /*D*
 //  Name:       ImbResponseBuffer
-//  Purpose:    Structure definition for response of a previous send 
+//  Purpose:    Structure definition for response of a previous send
 //  Context:    Used by DeviceIoControl to pass the message to be sent to
 //              MISSMIC port
-//  Fields:     
+//  Fields:
 //  		cCode		completion code returned by firmware
 //              data		buffer for  response data from firmware
 *D*/
 typedef struct {
-	BYTE       cCode;	
-	BYTE       data[1];	
+	BYTE       cCode;
+	BYTE       data[1];
 } ATTRIBUTE_PACKING ImbResponseBuffer;
-#define MIN_IMB_RESP_BUF_SIZE	1	
+#define MIN_IMB_RESP_BUF_SIZE	1
 #define MAX_IMB_RESP_SIZE		(MIN_IMB_RESP_BUF_SIZE + MAX_IMB_RESPONSE_SIZE)
 #if HAVE_PRAGMA_PACK
 #pragma pack(pop)
@@ -360,8 +360,8 @@ typedef DWORD	ImbAsyncSeq;
  * This is the structure passed in to IOCTL_IMB_GET_ASYNC_MSG
 */
 typedef struct {
-	DWORD		timeOut;   
-	ImbAsyncSeq	lastSeq;   
+	DWORD		timeOut;
+	ImbAsyncSeq	lastSeq;
 } ImbAsyncRequest;
 #define ASYNC_SEQ_START		0
 typedef struct {
@@ -495,21 +495,21 @@ typedef enum {
 typedef struct {
 	unsigned char	cmdType;
 	unsigned char	rsSa;
-	unsigned char	busType;	
-	unsigned char	netFn;	
-	unsigned char	rsLun;	
-	unsigned char *	data;	
+	unsigned char	busType;
+	unsigned char	netFn;
+	unsigned char	rsLun;
+	unsigned char *	data;
 	int		dataLength;
 } ATTRIBUTE_PACKING IMBPREQUESTDATA;
 /*
  * Request structure provided to SendTimedI2cRequest()
 */
 typedef struct {
-	unsigned char	rsSa;				
-	unsigned char	busType;		
+	unsigned char	rsSa;
+	unsigned char	busType;
 	unsigned char	numberOfBytesToRead;
-	unsigned char *	data;			
-	int		dataLength;	
+	unsigned char *	data;
+	int		dataLength;
 } ATTRIBUTE_PACKING I2CREQUESTDATA;
 #if HAVE_PRAGMA_PACK
 #pragma pack(pop)
@@ -568,7 +568,7 @@ typedef struct
 */
 #define	MAX_BUFFER_SIZE		64
 /*#endif // IMB_API */
-/****************************** 
+/******************************
  *  FUNCTION PROTOTYPES
  ******************************/
 ACCESN_STATUS
@@ -576,39 +576,39 @@ SendTimedImbpRequest (
 	IMBPREQUESTDATA *reqPtr,
 	int		timeOut,
 	BYTE *		respDataPtr,
-	int *		respDataLen,	
+	int *		respDataLen,
 	BYTE *		completionCode
 	);
 ACCESN_STATUS
 SendTimedI2cRequest (
-	I2CREQUESTDATA *reqPtr,	
+	I2CREQUESTDATA *reqPtr,
 	int		timeOut,
-	BYTE *		respDataPtr,	
+	BYTE *		respDataPtr,
 	int *		respDataLen,
-	BYTE *		completionCode	
+	BYTE *		completionCode
 	);
 ACCESN_STATUS
 SendAsyncImbpRequest (
 	IMBPREQUESTDATA *reqPtr,
-	BYTE *		 seqNo		
+	BYTE *		 seqNo
 	);
 ACCESN_STATUS
 GetAsyncImbpMessage (
-	ImbPacket *	msgPtr,	
-	DWORD *		msgLen,	
+	ImbPacket *	msgPtr,
+	DWORD *		msgLen,
 	DWORD		timeOut,
-	ImbAsyncSeq *	seqNo,	
-	DWORD		channelNumber 
+	ImbAsyncSeq *	seqNo,
+	DWORD		channelNumber
 	);
 ACCESN_STATUS
 GetAsyncImbpMessage_Ex (
-	ImbPacket *	msgPtr,	
+	ImbPacket *	msgPtr,
 	DWORD *		msgLen,
 	DWORD		timeOut,
-	ImbAsyncSeq *	seqNo,	
-	DWORD		channelNumber, 
-	BYTE *		sessionHandle, 
-	BYTE *		privilege 
+	ImbAsyncSeq *	seqNo,
+	DWORD		channelNumber,
+	BYTE *		sessionHandle,
+	BYTE *		privilege
 	);
 ACCESN_STATUS
 UnmapPhysicalMemory( int virtualAddress, int Length );
@@ -616,18 +616,18 @@ ACCESN_STATUS
 StartAsyncMesgPoll(void);
 ACCESN_STATUS
 MapPhysicalMemory (
-	int startAddress,	
+	int startAddress,
 	int addressLength,
-	int *virtualAddress	
+	int *virtualAddress
 	);
 ACCESN_STATUS
 SetShutDownCode (
 	int delayTime,
-	int code	
+	int code
 	);
 ACCESN_STATUS
 SendTimedEmpMessageResponse (
-	ImbPacket * ptr,	
+	ImbPacket * ptr,
 	char      *responseDataBuf,
 	int	  responseDataLen,
 	int 	  timeOut
@@ -637,7 +637,7 @@ SendTimedEmpMessageResponse_Ex (
 	ImbPacket * ptr,
 	char      *responseDataBuf,
 	int	  responseDataLen,
-	int 	  timeOut,	
+	int 	  timeOut,
 	BYTE	  sessionHandle,
 	BYTE	  channelNumber
 	);
@@ -646,7 +646,7 @@ SendTimedLanMessageResponse (
 	ImbPacket * ptr,
 	char      *responseDataBuf,
 	int	  responseDataLen,
-	int 	  timeOut	
+	int 	  timeOut
 	);
 ACCESN_STATUS
 SendTimedLanMessageResponse_Ex (

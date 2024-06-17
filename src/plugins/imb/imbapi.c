@@ -238,7 +238,7 @@ open_imb(void)
 			IpmiVersion);
 	return 1;
 } /* end open_imb() */
-#endif  
+#endif
 
 /* ipmi_open_ia */
 int
@@ -1236,32 +1236,32 @@ SetShutDownCode(int delayTime, int code)
 }
 
 /*/////////////////////////////////////////////////////////////////////////
-// MapPhysicalMemory 
+// MapPhysicalMemory
 /////////////////////////////////////////////////////////////////////////// */
 /*F*
-//  Name:       MapPhysicalMemory 
+//  Name:       MapPhysicalMemory
 //  Purpose:    This function maps specified range of physical memory in calling
 //              pocesse's address space
-//  Context:    Used by Upper level agents (sis modules) to access 
-//				system physical memory 
+//  Context:    Used by Upper level agents (sis modules) to access
+//				system physical memory
 //  Returns:    ACCESN_OK  else error status code
-//  Parameters: 
-//     
-//     startAddress   starting physical address of the  memory to be mapped 
+//  Parameters:
+//
+//     startAddress   starting physical address of the  memory to be mapped
 //     addressLength  length of the physical memory to be mapped
 //     virtualAddress pointer to the mapped virtual address
 //  Notes:      none
 *F*/
 /*///////////////////////////////////////////////////////////////////////////
-// UnmapPhysicalMemory 
+// UnmapPhysicalMemory
 //////////////////////////////////////////////////////////////////////////// */
 /*F*
-//  Name:       UnMapPhysicalMemory 
+//  Name:       UnMapPhysicalMemory
 //  Purpose:    This function unmaps the previously mapped physical memory
-//  Context:    Used by Upper level agents (sis modules)  
+//  Context:    Used by Upper level agents (sis modules)
 //  Returns:    ACCESN_OK  else error status code
-//  Parameters: 
-//     
+//  Parameters:
+//
 //     addressLength  length of the physical memory to be mapped
 //     virtualAddress pointer to the mapped virtual address
 //  Notes:      none
@@ -1273,7 +1273,7 @@ MapPhysicalMemory(int startAddress, int addressLength, int *virtualAddress)
 	DWORD retLength;
 	BOOL status;
 	PHYSICAL_MEMORY_INFO pmi;
-   
+
 	if (startAddress == 0 || addressLength <= 0) {
 		return ACCESN_OUT_OF_RANGE;
 	}

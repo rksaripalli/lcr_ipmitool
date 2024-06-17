@@ -8,12 +8,12 @@ this list of conditions and the following disclaimer.
 
 - Redistributions in binary form must reproduce the above copyright notice,
 this list of conditions and the following disclaimer in the documentation
-and/or other materials provided with the distribution. 
+and/or other materials provided with the distribution.
 - Neither the name of Dell Inc nor the names of its contributors
-may be used to endorse or promote products derived from this software 
-without specific prior written permission. 
+may be used to endorse or promote products derived from this software
+without specific prior written permission.
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE 
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
 ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
 LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
@@ -22,7 +22,7 @@ SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
 INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
 CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-POSSIBILITY OF SUCH DAMAGE. 
+POSSIBILITY OF SUCH DAMAGE.
 
 
 *****************************************************************************/
@@ -63,8 +63,8 @@ POSSIBILITY OF SUCH DAMAGE.
 #define IPMI_DELL_LCD_ERROR_DISP_SEL        0x01  /* use platform model name*/
 #define IPMI_DELL_LCD_ERROR_DISP_VERBOSE    0x02  /* blank*/
 
-#define IPMI_DELL_IDRAC_VALIDATOR           0xDD    
-#define IPMI_DELL_POWER_CAP_STATUS          0xBA   
+#define IPMI_DELL_IDRAC_VALIDATOR           0xDD
+#define IPMI_DELL_POWER_CAP_STATUS          0xBA
 #define IPMI_DELL_AVG_POWER_CONSMP_HST 	0xEB
 #define IPMI_DELL_PEAK_POWER_CONSMP_HST 0xEC
 #define SYSTEM_BOARD_SYSTEM_LEVEL_SENSOR_NUM 0x98
@@ -78,7 +78,7 @@ POSSIBILITY OF SUCH DAMAGE.
 #define btuphr              0x01
 #define watt                0x00
 #define IPMI_DELL_POWER_CAP 0xEA
-#define percent             0x03 
+#define percent             0x03
 
 /* Not on all Dell servers. If there, use it.*/
 #ifdef HAS_PRAGMA_PACK
@@ -111,9 +111,9 @@ typedef struct _tag_ipmi_dell_lcd_string
 {
      uint8_t parm_rev;                       /* 0x11 for IPMI 2.0 */
      uint8_t data_block_selector;            /* 16-byte data block number to access, 0 based.*/
-     union 
+     union
      {
-          struct 
+          struct
           {
                 uint8_t encoding : 4;                     /* 0 is printable ASCII 7-bit */
                 uint8_t length;                           /* 0 to max chars from lcd caps */
@@ -135,9 +135,9 @@ typedef struct _tag_ipmi_dell_lcd_stringex
       uint8_t parm_rev;                       /* 0x11 for IPMI 2.0 */
       uint8_t line_number;                    /* LCD line number 1 to 4 */
       uint8_t data_block_selector;            /* 16-byte data block number to access, 0 based.*/
-      union 
+      union
       {
-           struct  
+           struct
            {
                 uint8_t encoding : 4;                     /* 0 is printable ASCII 7-bit */
                 uint8_t length;                           /* 0 to max chars from lcd caps */
@@ -204,7 +204,7 @@ typedef struct _lcd_mode
 #define EMB_NIC_MAC_ADDRESS_11G     (uint8_t)(0xDA)
 #define EMB_NIC_MAC_ADDRESS_9G_10G  (uint8_t)(0xCB)
 
-#define IMC_IDRAC_10G               (uint8_t) (0x08) 
+#define IMC_IDRAC_10G               (uint8_t) (0x08)
 #define IMC_CMC                     (uint8_t) (0x09)
 #define IMC_IDRAC_11G_MONOLITHIC    (uint8_t) (0x0A)
 #define IMC_IDRAC_11G_MODULAR       (uint8_t) (0x0B)
@@ -281,11 +281,11 @@ typedef struct
 #define TOTAL_N0_NICS_INDEX         (uint8_t)(0x1)
 
 
-// 12g supported 
+// 12g supported
 #define SET_NIC_SELECTION_12G_CMD       (uint8_t)(0x28)
 #define GET_NIC_SELECTION_12G_CMD       (uint8_t)(0x29)
 
-// 11g supported 
+// 11g supported
 #define SET_NIC_SELECTION_CMD       (uint8_t)(0x24)
 #define GET_NIC_SELECTION_CMD       (uint8_t)(0x25)
 #define GET_ACTIVE_NIC_CMD          (uint8_t)(0xc1)
@@ -337,8 +337,8 @@ typedef struct _ipmi_power_supply_infoo
     uint8_t FrimwareVersion[MAX_POWER_FW_VERSION];
 	uint8_t  Powersupplytype;
 	uint16_t ratedDCWatts;
-	uint16_t Resv;	
-                          
+	uint16_t Resv;
+
 } ATTRIBUTE_PACKING IPMI_POWER_SUPPLY_INFO;
 #if HAS_PRAGMA_PACK
 #pragma pack(pop)
@@ -382,12 +382,12 @@ typedef struct ipmi_inst_power_consumption_data
 #endif
 typedef struct _ipmi_avgpower_consump_histroy
 {
-    uint8_t parameterselector;  
+    uint8_t parameterselector;
     uint16_t lastminutepower;
     uint16_t lasthourpower;
     uint16_t lastdaypower;
-    uint16_t lastweakpower;  
-                          
+    uint16_t lastweakpower;
+
 } ATTRIBUTE_PACKING IPMI_AVGPOWER_CONSUMP_HISTORY;
 #if HAS_PRAGMA_PACK
 #pragma pack(pop)
@@ -398,11 +398,11 @@ typedef struct _ipmi_avgpower_consump_histroy
 #endif
 typedef struct _ipmi_power_consump_histroy
 {
-    uint8_t parameterselector;   
+    uint8_t parameterselector;
     uint16_t lastminutepower;
     uint16_t lasthourpower;
     uint16_t lastdaypower;
-    uint16_t lastweakpower; 
+    uint16_t lastweakpower;
     uint32_t lastminutepowertime;
     uint32_t lasthourpowertime;
     uint32_t lastdaypowertime;
@@ -417,8 +417,8 @@ typedef struct _ipmi_power_consump_histroy
 #pragma pack(push, 1)
 #endif
 typedef struct _ipmi_delloem_power_cap
-{     
-    uint8_t parameterselector;      
+{
+    uint8_t parameterselector;
     uint16_t PowerCap;
     uint8_t unit;
     uint16_t MaximumPowerConsmp;
@@ -436,7 +436,7 @@ typedef struct _ipmi_delloem_power_cap
 #pragma pack(push, 1)
 #endif
 typedef struct _power_headroom
-{ 
+{
     uint16_t instheadroom;
     uint16_t peakheadroom;
 } ATTRIBUTE_PACKING POWER_HEADROOM;
