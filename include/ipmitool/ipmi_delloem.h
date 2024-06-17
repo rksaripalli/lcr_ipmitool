@@ -81,7 +81,7 @@ POSSIBILITY OF SUCH DAMAGE.
 #define percent             0x03
 
 /* Not on all Dell servers. If there, use it.*/
-#ifdef HAS_PRAGMA_PACK
+#if HAVE_PRAGMA_PACK
 #pragma pack(push, 1)
 #endif
 typedef struct _tag_ipmi_dell_lcd_caps
@@ -92,7 +92,7 @@ typedef struct _tag_ipmi_dell_lcd_caps
    uint8_t max_chars[4];                           /* 62 for triathlon, 0 if not present (glacier) */
                                                                              /* [0] is max chars for line 1 */
 } ATTRIBUTE_PACKING IPMI_DELL_LCD_CAPS;
-#if HAS_PRAGMA_PACK
+#if HAVE_PRAGMA_PACK
 #pragma pack(pop)
 #endif
 
@@ -104,7 +104,7 @@ typedef struct _tag_ipmi_dell_lcd_caps
 #define IPMI_GET_EXT_SD_CARD_INFO 0xA4
 
 
-#ifdef HAS_PRAGMA_PACK
+#if HAVE_PRAGMA_PACK
 #pragma pack(push, 1)
 #endif
 typedef struct _tag_ipmi_dell_lcd_string
@@ -122,12 +122,12 @@ typedef struct _tag_ipmi_dell_lcd_string
           uint8_t selector_n_data[IPMI_DELL_LCD_STRINGN_SIZE];
      }lcd_string;
 } ATTRIBUTE_PACKING IPMI_DELL_LCD_STRING;
-#if HAS_PRAGMA_PACK
+#if HAVE_PRAGMA_PACK
 #pragma pack(pop)
 #endif
 
 /* Only found on servers with more than 1 line. Use if available. */
-#ifdef HAS_PRAGMA_PACK
+#if HAVE_PRAGMA_PACK
 #pragma pack(push, 1)
 #endif
 typedef struct _tag_ipmi_dell_lcd_stringex
@@ -146,12 +146,12 @@ typedef struct _tag_ipmi_dell_lcd_stringex
            uint8_t selector_n_data[IPMI_DELL_LCD_STRINGN_SIZE];
    } lcd_string;
 } ATTRIBUTE_PACKING IPMI_DELL_LCD_STRINGEX;
-#if HAS_PRAGMA_PACK
+#if HAVE_PRAGMA_PACK
 #pragma pack(pop)
 #endif
 
 
-#ifdef HAS_PRAGMA_PACK
+#if HAVE_PRAGMA_PACK
 #pragma pack(push, 1)
 #endif
 typedef struct _lcd_status
@@ -162,11 +162,11 @@ typedef struct _lcd_status
       char Resv1;
       char Resv;
 } ATTRIBUTE_PACKING LCD_STATUS;
-#if HAS_PRAGMA_PACK
+#if HAVE_PRAGMA_PACK
 #pragma pack(pop)
 #endif
 
-#ifdef HAS_PRAGMA_PACK
+#if HAVE_PRAGMA_PACK
 #pragma pack(push, 1)
 #endif
 typedef struct _lcd_mode
@@ -178,7 +178,7 @@ typedef struct _lcd_mode
     uint8_t error_display;
     uint8_t Resv;
 } ATTRIBUTE_PACKING LCD_MODE;
-#if HAS_PRAGMA_PACK
+#if HAVE_PRAGMA_PACK
 #pragma pack(pop)
 #endif
 
@@ -219,7 +219,7 @@ typedef struct _lcd_mode
 #define IMC_IDRAC_13G_DCS			(uint8_t) (0x22)
 
 
-#ifdef HAS_PRAGMA_PACK
+#if HAVE_PRAGMA_PACK
 #pragma pack(push, 1)
 #endif
 typedef struct
@@ -231,41 +231,41 @@ typedef struct
      unsigned int Reserved : 3;
      uint8_t MacAddressByte[MACADDRESSLENGH];
 } ATTRIBUTE_PACKING LOMMacAddressType;
-#if HAS_PRAGMA_PACK
+#if HAVE_PRAGMA_PACK
 #pragma pack(pop)
 #endif
 
 
-#ifdef HAS_PRAGMA_PACK
+#if HAVE_PRAGMA_PACK
 #pragma pack(push, 1)
 #endif
 typedef struct
 {
      LOMMacAddressType LOMMacAddress [MAX_LOM];
 } ATTRIBUTE_PACKING EmbeddedNICMacAddressType;
-#if HAS_PRAGMA_PACK
+#if HAVE_PRAGMA_PACK
 #pragma pack(pop)
 #endif
 
-#ifdef HAS_PRAGMA_PACK
+#if HAVE_PRAGMA_PACK
 #pragma pack(push, 1)
 #endif
 typedef struct
 {
      uint8_t MacAddressByte[MACADDRESSLENGH];
 } ATTRIBUTE_PACKING MacAddressType;
-#if HAS_PRAGMA_PACK
+#if HAVE_PRAGMA_PACK
 #pragma pack(pop)
 #endif
 
-#ifdef HAS_PRAGMA_PACK
+#if HAVE_PRAGMA_PACK
 #pragma pack(push, 1)
 #endif
 typedef struct
 {
    MacAddressType MacAddress [MAX_LOM];
 } ATTRIBUTE_PACKING EmbeddedNICMacAddressType_10G;
-#if HAS_PRAGMA_PACK
+#if HAVE_PRAGMA_PACK
 #pragma pack(pop)
 #endif
 
@@ -304,7 +304,7 @@ typedef struct
 #define	GET_FRONT_PANEL_INFO_CMD		(uint8_t)0xb5
 
 
-#ifdef HAS_PRAGMA_PACK
+#if HAVE_PRAGMA_PACK
 #pragma pack(push, 1)
 #endif
 typedef struct _ipmi_power_monitor
@@ -317,14 +317,14 @@ typedef struct _ipmi_power_monitor
     uint32_t        wattPeakTime;
     uint16_t        wattReading;
 } ATTRIBUTE_PACKING IPMI_POWER_MONITOR;
-#if HAS_PRAGMA_PACK
+#if HAVE_PRAGMA_PACK
 #pragma pack(pop)
 #endif
 
 
 #define MAX_POWER_FW_VERSION 8
 
-#ifdef HAS_PRAGMA_PACK
+#if HAVE_PRAGMA_PACK
 #pragma pack(push, 1)
 #endif
 typedef struct _ipmi_power_supply_infoo
@@ -340,12 +340,12 @@ typedef struct _ipmi_power_supply_infoo
 	uint16_t Resv;
 
 } ATTRIBUTE_PACKING IPMI_POWER_SUPPLY_INFO;
-#if HAS_PRAGMA_PACK
+#if HAVE_PRAGMA_PACK
 #pragma pack(pop)
 #endif
 
 
-#ifdef HAS_PRAGMA_PACK
+#if HAVE_PRAGMA_PACK
 #pragma pack(push, 1)
 #endif
 typedef struct ipmi_power_consumption_data
@@ -358,12 +358,12 @@ typedef struct ipmi_power_consumption_data
     uint16_t throttlepowerconsumption;
     uint16_t Resv;
 } ATTRIBUTE_PACKING IPMI_POWER_CONSUMPTION_DATA;
-#if HAS_PRAGMA_PACK
+#if HAVE_PRAGMA_PACK
 #pragma pack(pop)
 #endif
 
 
-#ifdef HAS_PRAGMA_PACK
+#if HAVE_PRAGMA_PACK
 #pragma pack(push, 1)
 #endif
 typedef struct ipmi_inst_power_consumption_data
@@ -373,11 +373,11 @@ typedef struct ipmi_inst_power_consumption_data
     uint16_t resv1;
     uint8_t resv;
 } ATTRIBUTE_PACKING IPMI_INST_POWER_CONSUMPTION_DATA;
-#if HAS_PRAGMA_PACK
+#if HAVE_PRAGMA_PACK
 #pragma pack(pop)
 #endif
 
-#ifdef HAS_PRAGMA_PACK
+#if HAVE_PRAGMA_PACK
 #pragma pack(push, 1)
 #endif
 typedef struct _ipmi_avgpower_consump_histroy
@@ -389,11 +389,11 @@ typedef struct _ipmi_avgpower_consump_histroy
     uint16_t lastweakpower;
 
 } ATTRIBUTE_PACKING IPMI_AVGPOWER_CONSUMP_HISTORY;
-#if HAS_PRAGMA_PACK
+#if HAVE_PRAGMA_PACK
 #pragma pack(pop)
 #endif
 
-#ifdef HAS_PRAGMA_PACK
+#if HAVE_PRAGMA_PACK
 #pragma pack(push, 1)
 #endif
 typedef struct _ipmi_power_consump_histroy
@@ -408,12 +408,12 @@ typedef struct _ipmi_power_consump_histroy
     uint32_t lastdaypowertime;
     uint32_t lastweekpowertime;
 } ATTRIBUTE_PACKING IPMI_POWER_CONSUMP_HISTORY;
-#if HAS_PRAGMA_PACK
+#if HAVE_PRAGMA_PACK
 #pragma pack(pop)
 #endif
 
 
-#ifdef HAS_PRAGMA_PACK
+#if HAVE_PRAGMA_PACK
 #pragma pack(push, 1)
 #endif
 typedef struct _ipmi_delloem_power_cap
@@ -428,11 +428,11 @@ typedef struct _ipmi_delloem_power_cap
     uint16_t SystemThrottling;
     uint16_t Resv;
 } ATTRIBUTE_PACKING IPMI_POWER_CAP;
-#if HAS_PRAGMA_PACK
+#if HAVE_PRAGMA_PACK
 #pragma pack(pop)
 #endif
 
-#ifdef HAS_PRAGMA_PACK
+#if HAVE_PRAGMA_PACK
 #pragma pack(push, 1)
 #endif
 typedef struct _power_headroom
@@ -440,11 +440,11 @@ typedef struct _power_headroom
     uint16_t instheadroom;
     uint16_t peakheadroom;
 } ATTRIBUTE_PACKING POWER_HEADROOM;
-#if HAS_PRAGMA_PACK
+#if HAVE_PRAGMA_PACK
 #pragma pack(pop)
 #endif
 
-#ifdef HAS_PRAGMA_PACK
+#if HAVE_PRAGMA_PACK
 #pragma pack(push, 1)
 #endif
 typedef struct ipmi_vFlash_extended_info
@@ -456,12 +456,12 @@ typedef struct ipmi_vFlash_extended_info
 	uint8_t  bootpartion;
 	uint8_t  Resv;
 } ATTRIBUTE_PACKING IPMI_DELL_SDCARD_INFO;
-#if HAS_PRAGMA_PACK
+#if HAVE_PRAGMA_PACK
 #pragma pack(pop)
 #endif
 
 
-#ifdef HAS_PRAGMA_PACK
+#if HAVE_PRAGMA_PACK
 #pragma pack(push, 1)
 #endif
 typedef struct _SensorReadingType
@@ -470,7 +470,7 @@ typedef struct _SensorReadingType
     uint8_t sensorFlags;
     uint16_t sensorState;
 } ATTRIBUTE_PACKING SensorReadingType;
-#if HAS_PRAGMA_PACK
+#if HAVE_PRAGMA_PACK
 #pragma pack(pop)
 #endif
 uint16_t compareinputwattage(IPMI_POWER_SUPPLY_INFO* powersupplyinfo, uint16_t inputwattage);
