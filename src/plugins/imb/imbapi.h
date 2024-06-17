@@ -255,6 +255,9 @@ typedef struct _IO_STATUS_BLOCK {
 /*----------------------------------------------------------------------*/
 #ifndef IMB_IF__
 #define IMB_IF__
+
+#include <ipmitool/ipmi.h>
+
 /*
  * This is the structure passed in to the IOCTL_IMB_SHUTDOWN_CODE request
  */
