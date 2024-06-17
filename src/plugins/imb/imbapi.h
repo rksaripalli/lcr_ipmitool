@@ -36,6 +36,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #pragma once
 
+#include <ipmitool/ipmi.h>
+
 #ifndef	_WINDEFS_H
 #define	_WINDEFS_H
 
