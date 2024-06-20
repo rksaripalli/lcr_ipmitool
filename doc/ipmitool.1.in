@@ -85,12 +85,6 @@ Set destination channel for bridged request.
 \fB\-B\fR <\fIchannel\fP>
 Set transit channel for bridged request (dual bridge).
 .TP 
-\fB\-b\fR <\fIchannel\fP>
-Set destination channel for bridged request.
-.TP 
-\fB\-B\fR <\fIchannel\fP>
-Set transit channel for bridged request. (dual bridge)
-.TP 
 \fB\-c\fR
 Present output in CSV (comma separated variable) format.  
 This is not available with all commands.
