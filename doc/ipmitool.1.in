@@ -2866,6 +2866,38 @@ RAW RSP (5 bytes)
 .br 
 
 Prints information for sensor data records specified by sensor id.
+The sensor id may be either the sensor name (string) or the sensor number,
+see
+.BR strtol (3)
+for the syntax.
+
+For example, all the following commands would get the same sensor record
+and produce the same output:
+
+.EX
+> ipmitool sdr get "VR CPU0 SUM PWR"
+> ipmitool sdr get 0x28 # Hexadecimal
+> ipmitool sdr get 050 # Octal
+> ipmitool sdr get 40 # Decimal
+Sensor ID              : VR CPU0 SUM PWR (0x28)
+ Entity ID             : 0.1
+ Sensor Type (Threshold)  : Other
+ Sensor Reading        : 109,600 (+/- 0) Watts
+ Status                : ok
+ Lower Non-Recoverable : na
+ Lower Critical        : na
+ Lower Non-Critical    : na
+ Upper Non-Critical    : na
+ Upper Critical        : na
+ Upper Non-Recoverable : na
+ Positive Hysteresis   : Unspecified
+ Negative Hysteresis   : Unspecified
+ Event Status          : Event Messages Disabled
+ Assertion Events      :
+ Event Enable          : Event Messages Disabled
+ Assertions Enabled    :
+.EE
+
 .TP 
 \fIinfo\fP
 .br 
@@ -3089,7 +3121,8 @@ Lists sensors and thresholds in a wide table format.
 \fIget\fP <\fBid\fR> ... [<\fBid\fR>]
 .br 
 
-Prints information for sensors specified by name.
+Prints information for sensors specified by name or numeric id,
+similar to \fIipmitool sdr get\fP command.
 .TP 
 \fIthresh\fP <\fBid\fR> <\fBthreshold\fR> <\fBsetting\fR>
 .br 

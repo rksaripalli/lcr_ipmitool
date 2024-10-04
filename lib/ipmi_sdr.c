@@ -3880,6 +3880,8 @@ ipmi_sdr_find_sdr_byid(struct ipmi_intf *intf, char *id)
 	struct sdr_record_list *e;
 	int found = 0;
 	int idlen;
+	int num, sensor_num;
+	char * endptr = id;
 	const uint8_t *nameptr = NULL;
 	uint8_t id_code = 0;
 
@@ -3887,6 +3889,13 @@ ipmi_sdr_find_sdr_byid(struct ipmi_intf *intf, char *id)
 		return NULL;
 
 	idlen = strlen(id);
+
+	/* Attempt to treat id as a number */
+	num = strtol(id, &endptr, 0);
+	if (endptr[0]) {
+		/* endptr is not at the end of `id`, `id` is not a number */
+		num = -1;
+	}
 
 	if (!sdr_list_itr) {
 		sdr_list_itr = ipmi_sdr_start(intf, 0);
@@ -3900,18 +3909,22 @@ ipmi_sdr_find_sdr_byid(struct ipmi_intf *intf, char *id)
 	for (e = sdr_list_head; e; e = e->next) {
 		nameptr = NULL;
 		id_code = 0;
+		sensor_num = -1; // Assume N/A
 		switch (e->type) {
 		case SDR_RECORD_TYPE_FULL_SENSOR:
 			nameptr = e->record.full->id_string;
 			id_code = e->record.full->id_code;
+			sensor_num = e->record.full->cmn.keys.sensor_num;
 			break;
 		case SDR_RECORD_TYPE_COMPACT_SENSOR:
 			nameptr = e->record.compact->id_string;
 			id_code = e->record.compact->id_code;
+			sensor_num = e->record.compact->cmn.keys.sensor_num;
 			break;
 		case SDR_RECORD_TYPE_EVENTONLY_SENSOR:
 			nameptr = e->record.eventonly->id_string;
 			id_code = e->record.eventonly->id_code;
+			sensor_num = e->record.eventonly->keys.sensor_num;
 			break;
 		case SDR_RECORD_TYPE_GENERIC_DEVICE_LOCATOR:
 			nameptr = e->record.genloc->id_string;
@@ -3929,9 +3942,12 @@ ipmi_sdr_find_sdr_byid(struct ipmi_intf *intf, char *id)
 			continue;
 		}
 
-		if (!strncmp((const char *)nameptr,
-		             (const char *)id,
-		             __max(id_code & 0x1f, idlen)))
+		/* If numeric ID is requested, compare it to the sensor number
+		 * if available. If ID is a string, compare it to the name */
+		if ((num != -1 && num == sensor_num)
+		    || (!strncmp((const char *)nameptr,
+		                 (const char *)id,
+		                 __max(id_code & 0x1f, idlen))))
 		{
 			return e;
 		}
@@ -3962,21 +3978,25 @@ ipmi_sdr_find_sdr_byid(struct ipmi_intf *intf, char *id)
 
 		nameptr = NULL;
 		id_code = 0;
+		sensor_num = -1; // Assume N/A
 		switch (header->type) {
 		case SDR_RECORD_TYPE_FULL_SENSOR:
 			sdrr->record.full = (struct sdr_record_full_sensor *) rec;
 			nameptr = sdrr->record.full->id_string;
 			id_code = sdrr->record.full->id_code;
+			sensor_num = sdrr->record.full->cmn.keys.sensor_num;
 			break;
 		case SDR_RECORD_TYPE_COMPACT_SENSOR:
 			sdrr->record.compact = (struct sdr_record_compact_sensor *) rec;
 			nameptr = sdrr->record.compact->id_string;
 			id_code = sdrr->record.compact->id_code;
+			sensor_num = sdrr->record.compact->cmn.keys.sensor_num;
 			break;
 		case SDR_RECORD_TYPE_EVENTONLY_SENSOR:
 			sdrr->record.eventonly = (struct sdr_record_eventonly_sensor *) rec;
 			nameptr = sdrr->record.eventonly->id_string;
 			id_code = sdrr->record.eventonly->id_code;
+			sensor_num = sdrr->record.eventonly->keys.sensor_num;
 			break;
 		case SDR_RECORD_TYPE_GENERIC_DEVICE_LOCATOR:
 			sdrr->record.genloc = (struct sdr_record_generic_locator *) rec;
@@ -4007,9 +4027,12 @@ ipmi_sdr_find_sdr_byid(struct ipmi_intf *intf, char *id)
 			continue;
 		}
 
-		if (nameptr && !strncmp((const char *)nameptr,
+		/* If numeric ID is requested, compare it to the sensor number.
+		 * If the ID is a string, compare it to the name. */
+		if ((num != -1 && num == sensor_num)
+		    || (nameptr && !strncmp((const char *)nameptr,
 		                        (const char *)id,
-		                        __max(id_code & 0x1f, idlen)))
+		                        __max(id_code & 0x1f, idlen))))
 		{
 			found = 1;
 		}
