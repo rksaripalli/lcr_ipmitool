@@ -3880,6 +3880,8 @@ ipmi_sdr_find_sdr_byid(struct ipmi_intf *intf, char *id)
 	struct sdr_record_list *e;
 	int found = 0;
 	int idlen;
+	const uint8_t *nameptr = NULL;
+	uint8_t id_code = 0;
 
 	if (!id)
 		return NULL;
@@ -3896,43 +3898,42 @@ ipmi_sdr_find_sdr_byid(struct ipmi_intf *intf, char *id)
 
 	/* check what we've already read */
 	for (e = sdr_list_head; e; e = e->next) {
+		nameptr = NULL;
+		id_code = 0;
 		switch (e->type) {
 		case SDR_RECORD_TYPE_FULL_SENSOR:
-			if (!strncmp((const char *)e->record.full->id_string,
-				     (const char *)id,
-				     __max(e->record.full->id_code & 0x1f, idlen)))
-				return e;
+			nameptr = e->record.full->id_string;
+			id_code = e->record.full->id_code;
 			break;
 		case SDR_RECORD_TYPE_COMPACT_SENSOR:
-			if (!strncmp((const char *)e->record.compact->id_string,
-				     (const char *)id,
-				     __max(e->record.compact->id_code & 0x1f, idlen)))
-				return e;
+			nameptr = e->record.compact->id_string;
+			id_code = e->record.compact->id_code;
 			break;
 		case SDR_RECORD_TYPE_EVENTONLY_SENSOR:
-			if (!strncmp((const char *)e->record.eventonly->id_string,
-				     (const char *)id,
-				     __max(e->record.eventonly->id_code & 0x1f, idlen)))
-				return e;
+			nameptr = e->record.eventonly->id_string;
+			id_code = e->record.eventonly->id_code;
 			break;
 		case SDR_RECORD_TYPE_GENERIC_DEVICE_LOCATOR:
-			if (!strncmp((const char *)e->record.genloc->id_string,
-				     (const char *)id,
-				     __max(e->record.genloc->id_code & 0x1f, idlen)))
-				return e;
+			nameptr = e->record.genloc->id_string;
+			id_code = e->record.genloc->id_code;
 			break;
 		case SDR_RECORD_TYPE_FRU_DEVICE_LOCATOR:
-			if (!strncmp((const char *)e->record.fruloc->id_string,
-				     (const char *)id,
-				     __max(e->record.fruloc->id_code & 0x1f, idlen)))
-				return e;
+			nameptr = e->record.fruloc->id_string;
+			id_code = e->record.fruloc->id_code;
 			break;
 		case SDR_RECORD_TYPE_MC_DEVICE_LOCATOR:
-			if (!strncmp((const char *)e->record.mcloc->id_string,
-				     (const char *)id,
-				     __max(e->record.mcloc->id_code & 0x1f, idlen)))
-				return e;
+			nameptr = e->record.mcloc->id_string;
+			id_code = e->record.mcloc->id_code;
 			break;
+		default:
+			continue;
+		}
+
+		if (!strncmp((const char *)nameptr,
+		             (const char *)id,
+		             __max(id_code & 0x1f, idlen)))
+		{
+			return e;
 		}
 	}
 
@@ -3959,62 +3960,38 @@ ipmi_sdr_find_sdr_byid(struct ipmi_intf *intf, char *id)
 			continue;
 		}
 
+		nameptr = NULL;
+		id_code = 0;
 		switch (header->type) {
 		case SDR_RECORD_TYPE_FULL_SENSOR:
-			sdrr->record.full =
-			    (struct sdr_record_full_sensor *) rec;
-			if (!strncmp(
-			    (const char *)sdrr->record.full->id_string,
-			    (const char *)id,
-			    __max(sdrr->record.full->id_code & 0x1f, idlen)))
-				found = 1;
+			sdrr->record.full = (struct sdr_record_full_sensor *) rec;
+			nameptr = sdrr->record.full->id_string;
+			id_code = sdrr->record.full->id_code;
 			break;
 		case SDR_RECORD_TYPE_COMPACT_SENSOR:
-			sdrr->record.compact =
-			    (struct sdr_record_compact_sensor *) rec;
-			if (!strncmp(
-			    (const char *)sdrr->record.compact->id_string,
-			    (const char *)id,
-			    __max(sdrr->record.compact->id_code & 0x1f,
-				   idlen)))
-				found = 1;
+			sdrr->record.compact = (struct sdr_record_compact_sensor *) rec;
+			nameptr = sdrr->record.compact->id_string;
+			id_code = sdrr->record.compact->id_code;
 			break;
 		case SDR_RECORD_TYPE_EVENTONLY_SENSOR:
-			sdrr->record.eventonly =
-			    (struct sdr_record_eventonly_sensor *) rec;
-			if (!strncmp(
-			    (const char *)sdrr->record.eventonly->id_string,
-			    (const char *)id,
-			    __max(sdrr->record.eventonly->id_code & 0x1f,
-				   idlen)))
-				found = 1;
+			sdrr->record.eventonly = (struct sdr_record_eventonly_sensor *) rec;
+			nameptr = sdrr->record.eventonly->id_string;
+			id_code = sdrr->record.eventonly->id_code;
 			break;
 		case SDR_RECORD_TYPE_GENERIC_DEVICE_LOCATOR:
-			sdrr->record.genloc =
-			    (struct sdr_record_generic_locator *) rec;
-			if (!strncmp(
-			    (const char *)sdrr->record.genloc->id_string,
-			    (const char *)id,
-			    __max(sdrr->record.genloc->id_code & 0x1f, idlen)))
-				found = 1;
+			sdrr->record.genloc = (struct sdr_record_generic_locator *) rec;
+			nameptr = sdrr->record.genloc->id_string;
+			id_code = sdrr->record.genloc->id_code;
 			break;
 		case SDR_RECORD_TYPE_FRU_DEVICE_LOCATOR:
-			sdrr->record.fruloc =
-			    (struct sdr_record_fru_locator *) rec;
-			if (!strncmp(
-			    (const char *)sdrr->record.fruloc->id_string,
-			    (const char *)id,
-			    __max(sdrr->record.fruloc->id_code & 0x1f, idlen)))
-				found = 1;
+			sdrr->record.fruloc = (struct sdr_record_fru_locator *) rec;
+			nameptr = sdrr->record.fruloc->id_string;
+			id_code = sdrr->record.fruloc->id_code;
 			break;
 		case SDR_RECORD_TYPE_MC_DEVICE_LOCATOR:
-			sdrr->record.mcloc =
-			    (struct sdr_record_mc_locator *) rec;
-			if (!strncmp(
-			    (const char *)sdrr->record.mcloc->id_string,
-			    (const char *)id,
-			    __max(sdrr->record.mcloc->id_code & 0x1f, idlen)))
-				found = 1;
+			sdrr->record.mcloc = (struct sdr_record_mc_locator *) rec;
+			nameptr = sdrr->record.mcloc->id_string;
+			id_code = sdrr->record.mcloc->id_code;
 			break;
 		case SDR_RECORD_TYPE_ENTITY_ASSOC:
 			sdrr->record.entassoc =
@@ -4028,6 +4005,13 @@ ipmi_sdr_find_sdr_byid(struct ipmi_intf *intf, char *id)
 				sdrr = NULL;
 			}
 			continue;
+		}
+
+		if (nameptr && !strncmp((const char *)nameptr,
+		                        (const char *)id,
+		                        __max(id_code & 0x1f, idlen)))
+		{
+			found = 1;
 		}
 
 		/* add to global record liset */
