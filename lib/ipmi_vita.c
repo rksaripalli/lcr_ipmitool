@@ -351,6 +351,14 @@ ipmi_vita_getaddr(struct ipmi_intf *intf, int argc, char **argv)
 *  intf :- IPMI interface
 *  num_bytes :- number of bytes in the identifier
 *  argv :- An array of bytes to use for the identifier
+*
+*  Send a VITA 46.11 request in the following format 
+*  First byte is VSO identifier (value of 3)
+*  Second byte is VITA spec (3) and # of bytes in identifier
+*  Remaining bytes are the chassis identifier
+
+*  returns 0 on success
+*  Returns -1 on failure and log it
 */
 
 static int
@@ -365,9 +373,16 @@ ipmi_vita_set_chassis_id(struct ipmi_intf *intf, int num_bytes, char **argv)
 	memset(&req, 0, sizeof(req));
 
 	/* we cannot use 0 bytes as identifier for vita 46.11 */
-	if (!num_bytes) return -1;
+	if (!num_bytes) {
+		lprintf(LOG_ERR, "# of bytes in chassis identifier is %d (not valid)\n", num_bytes);
+		return -1;
+	}
 
-	/* allocate the data. This is one byte more than the actual identifier */
+	/* allocate the data.
+	*  This is 2 bytes more than the actual identifier
+	*  See the vita 46.11 specification
+	*  First byte in request is 
+	*/
 	msg_data = (unsigned char *) malloc((num_bytes+2) * sizeof(unsigned char));
 	if (!msg_data) {
 		lprintf(LOG_ERR, "unable to allocate memory");
