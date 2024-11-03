@@ -109,7 +109,8 @@ static struct valstr vita_help_strings[] = {
 		"    led cap           - get led color capabilities\n"
 		"    led get           - get led state\n"
 		"    led set           - set led state\n"
-		"	 getchassisid	   - Get Chassis ID\n"
+		"    getchassisid	   - Get Chassis ID\n"
+		"    setchassisid	   - Set Chassis ID\n"
 	},
 	{
 		VITA_CMD_FRUCONTROL,
@@ -183,6 +184,10 @@ static struct valstr vita_help_strings[] = {
 	{
 		VITA_CMD_GET_CHASSIS_ID,
 		"Usage: getchassisid",
+	},
+	{
+		VITA_CMD_SET_CHASSIS_ID,
+		"Usage: setchassisid <Sequence of bytes>",
 	},
 	{
 		VITA_CMD_UNKNOWN,
@@ -340,6 +345,74 @@ ipmi_vita_getaddr(struct ipmi_intf *intf, int argc, char **argv)
 }
 
 /*
+* Implementation of the set chassis id command
+* for Tier 3 chassis managers and IPMC
+* Parameters
+*  intf :- IPMI interface
+*  num_bytes :- number of bytes in the identifier
+*  argv :- An array of bytes to use for the identifier
+*/
+
+static int
+ipmi_vita_set_chassis_id(struct ipmi_intf *intf, int num_bytes, char **argv)
+{
+	struct ipmi_rs *rsp;
+	struct ipmi_rq req;
+	unsigned char *msg_data;
+	int i;
+	unsigned int byte;
+
+	memset(&req, 0, sizeof(req));
+
+	/* we cannot use 0 bytes as identifier for vita 46.11 */
+	if (!num_bytes) return -1;
+
+	/* allocate the data. This is one byte more than the actual identifier */
+	msg_data = (unsigned char *) malloc((num_bytes+2) * sizeof(unsigned char));
+	if (!msg_data) {
+		lprintf(LOG_ERR, "unable to allocate memory");
+		return -1;
+	}
+
+	/* create the data buffer See Set Chassis identifier command in vita specification
+	*
+	*/
+    msg_data[0] = GROUP_EXT_VITA;		/* VITA identifier */
+	msg_data[1] = (0xc0) | (num_bytes & 0x3f);
+	for (i = 0; i < num_bytes; i++) {
+		sscanf(argv[i], "%x", &byte);
+		msg_data[i+2] = (unsigned char)byte;
+	}
+
+	req.msg.netfn = IPMI_NETFN_PICMG;
+	req.msg.cmd = VITA_SET_CHASSIS_IDENTIFIER_CMD;
+	req.msg.data = msg_data;
+	req.msg.data_len = num_bytes+2;	/* Actual data is 2 bytes more */
+
+	rsp = intf->sendrecv(intf, &req);
+	if (!rsp) {
+		lprintf(LOG_ERR, "No valid response received.");
+		return -1;
+	}
+	else if (rsp->ccode) {
+		lprintf(LOG_ERR, "Invalid completion code received. %s",
+		val2str(rsp->ccode, completion_code_vals));
+		return -1;
+	}
+	else if (rsp->data_len < 1) {
+		lprintf(LOG_ERR, "Invalid response length. %d", rsp->data_len);
+		return -1;
+	}
+	else if (rsp->data[0] != GROUP_EXT_VITA) {
+		lprintf(LOG_ERR, "Invalid group extension %#x", rsp->data[0]);
+		return -1;
+	}
+
+	return 0;
+}
+
+
+/*
 * Implements the get_chassis_id vita 46.11 command
 * code is 2
 * Returns 0 if successful and logs values
@@ -387,7 +460,7 @@ ipmi_vita_get_chassis_id(struct ipmi_intf *intf)
 		return -1;
 	}
 
-	printf("# of bytes in chassis identifier : %d\n", chassis_id_length_byte & 0x1f);
+	printf("# of bytes in chassis identifier : %d\n", chassis_id_length_byte & 0x3f);
 	return 0;
 }
 
@@ -1125,6 +1198,10 @@ ipmi_vita_main (struct ipmi_intf *intf, int argc, char **argv)
 
 	case VITA_CMD_GET_CHASSIS_ID:
 		rc = ipmi_vita_get_chassis_id(intf);
+		break;
+
+	case VITA_CMD_SET_CHASSIS_ID:
+		rc = ipmi_vita_set_chassis_id(intf, argc-1, &argv[1]);
 		break;
 
 	default:
