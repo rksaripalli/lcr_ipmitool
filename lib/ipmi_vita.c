@@ -51,6 +51,26 @@
 #define VITA_CMD_LED_CAP	9
 #define VITA_CMD_LED_GET	10
 #define VITA_CMD_LED_SET	11
+
+/* Tier2 and Tier 3 chassis manager commands */
+#define VITA_CMD_GET_CHASSIS_ADDRESS_TABLE_INFO	12
+#define VITA_CMD_GET_CHASSIS_ID		13
+#define VITA_CMD_SET_CHASSIS_ID		14
+#define VITA_CMD_SET_IPMB_STATE		15
+#define VITA_CMD_SET_FRU_POLICY_STATE_BITS	16
+#define VITA_CMD_GET_FRU_POLICY_STATE_BITS	17
+#define VITA_CMD_GET_DEVICE_LOCATOR_ID		18
+#define VITA_CMD_GET_CHASSIS_MGR_IPMB_ADDRESS	19
+#define VITA_CMD_SET_FAN_POLICY		20
+#define VITA_CMD_GET_FAN_POLICY		21
+#define VITA_CMD_GET_CHASSIS_MGR_IP_ADDR	22
+#define VITA_CMD_GET_SENSOR_NUMBERS		23
+#define VITA_CMD_GET_FRU_HASH			24
+#define VITA_CMD_GET_PAYLOAD_CAPABILITIES	25
+#define VITA_CMD_SET_PAYLOAD_MODE			26
+#define VITA_CMD_GET_POWER_SUPPLY_CAPABILITIES	27
+#define VITA_CMD_GET_POWER_SUPPLY_STATUS	28
+#define VITA_CMD_SET_POWER_SUPPLY_STATUS	29
 #define VITA_CMD_UNKNOWN	255
 
 /* VITA 46.11 Site Type strings */
@@ -88,7 +108,8 @@ static struct valstr vita_help_strings[] = {
 		"    led prop          - get led properties\n"
 		"    led cap           - get led color capabilities\n"
 		"    led get           - get led state\n"
-		"    led set           - set led state"
+		"    led set           - set led state\n"
+		"	 getchassisid	   - Get Chassis ID\n"
 	},
 	{
 		VITA_CMD_FRUCONTROL,
@@ -158,6 +179,10 @@ static struct valstr vita_help_strings[] = {
 		"               6:   WHITE\n"
 		"               0xE: do not change\n"
 		"               0xF: use default color"
+	},
+	{
+		VITA_CMD_GET_CHASSIS_ID,
+		"Usage: getchassisid",
 	},
 	{
 		VITA_CMD_UNKNOWN,
@@ -311,6 +336,58 @@ ipmi_vita_getaddr(struct ipmi_intf *intf, int argc, char **argv)
 		printf("Channel 7 Address: 0x%02x\n", rsp->data[8]);
 	}
 
+	return 0;
+}
+
+/*
+* Implements the get_chassis_id vita 46.11 command
+* code is 2
+* Returns 0 if successful and logs values
+* else -1 if failure
+*/
+static int
+ipmi_vita_get_chassis_id(struct ipmi_intf *intf)
+{
+	struct ipmi_rs *rsp;
+	struct ipmi_rq req;
+	unsigned char msg_data;
+	uint8_t chassis_id_length_byte;
+
+	memset(&req, 0, sizeof(req));
+
+	req.msg.netfn = IPMI_NETFN_PICMG;
+	req.msg.cmd = VITA_GET_CHASSIS_IDENTIFIER_CMD;
+	req.msg.data = &msg_data;
+	req.msg.data_len = 1;
+
+	msg_data = GROUP_EXT_VITA;		/* VITA identifier */
+
+	rsp = intf->sendrecv(intf, &req);
+	if (!rsp) {
+		lprintf(LOG_ERR, "No valid response received.");
+		return -1;
+	}
+	else if (rsp->ccode) {
+		lprintf(LOG_ERR, "Invalid completion code received. %s",
+		val2str(rsp->ccode, completion_code_vals));
+		return -1;
+	}
+	else if (rsp->data_len < 3) {
+		lprintf(LOG_ERR, "Invalid response length. %d", rsp->data_len);
+		return -1;
+	}
+	else if (rsp->data[0] != GROUP_EXT_VITA) {
+		lprintf(LOG_ERR, "Invalid group extension %#x", rsp->data[0]);
+		return -1;
+	}
+
+	chassis_id_length_byte = rsp->data[1];
+	if ( (chassis_id_length_byte & 0xc0 ) != 0xc0) {
+		lprintf(LOG_ERR, "Not a VITA 46.11 chassis %d", chassis_id_length_byte);
+		return -1;
+	}
+
+	printf("# of bytes in chassis identifier : %d\n", chassis_id_length_byte & 0x1f);
 	return 0;
 }
 
@@ -828,9 +905,57 @@ ipmi_vita_get_cmd(int argc, char **argv)
 		return VITA_CMD_PROPERTIES;
 	}
 
+	/* get chassis address table info */
+	if (!strcmp(argv[0], "chassisaddr")) {
+		return VITA_CMD_GET_CHASSIS_ADDRESS_TABLE_INFO;
+	}
+
+	/* get chassis identifier */
+	if (!strcmp(argv[0], "getchassisid")) {
+		return VITA_CMD_GET_CHASSIS_ID;
+	}
+
+	/* set chassis identifier */
+	if (!strcmp(argv[0], "setchassisid")) {
+		return VITA_CMD_SET_CHASSIS_ID;
+	}
+
 	/* FRU Control command */
 	if (!strcmp(argv[0], "frucontrol")) {
 		return VITA_CMD_FRUCONTROL;
+	}
+
+	/* set ipmb state */
+	if (!strcmp(argv[0], "setipmbstate")) {
+		return VITA_CMD_SET_IPMB_STATE;
+	}
+
+	/* set fru state policy */
+	if (!strcmp(argv[0], "setfrupolicy")) {
+		return VITA_CMD_SET_FRU_POLICY_STATE_BITS;
+	}
+
+	/* get fru state policy */
+	if (!strcmp(argv[0], "getfrupolicy")) {
+		return VITA_CMD_GET_FRU_POLICY_STATE_BITS;
+	}
+
+	if (!strcmp(argv[0], "getdevicelocator")) {
+		return VITA_CMD_GET_DEVICE_LOCATOR_ID;
+	}
+
+	/* get chassis manager ipmb address */
+	if (!strcmp(argv[0], "getcmipmbaddr")) {
+		return VITA_CMD_GET_CHASSIS_MGR_IPMB_ADDRESS;
+	}
+
+	/* set fan policy */
+	if (!strcmp(argv[0], "setfanpolicy")) {
+		return VITA_CMD_SET_FAN_POLICY;
+	}
+
+	if (!strcmp(argv[0], "getfanpolicy")) {
+		return VITA_CMD_GET_FAN_POLICY;
 	}
 
 	/* Get FRU Address Info command */
@@ -997,6 +1122,11 @@ ipmi_vita_main (struct ipmi_intf *intf, int argc, char **argv)
 			show_help = 1;
 		}
 		break;
+
+	case VITA_CMD_GET_CHASSIS_ID:
+		rc = ipmi_vita_get_chassis_id(intf);
+		break;
+
 	default:
 		lprintf(LOG_NOTICE, "Unknown command");
 		cmd = VITA_CMD_HELP;
