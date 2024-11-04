@@ -499,6 +499,8 @@ ipmi_vita_get_chassis_id(struct ipmi_intf *intf)
 	struct ipmi_rq req;
 	unsigned char msg_data;
 	uint8_t chassis_id_length_byte;
+	int i;
+	uint8_t chassis_id_length_in_bytes = 0;
 
 	memset(&req, 0, sizeof(req));
 
@@ -534,7 +536,12 @@ ipmi_vita_get_chassis_id(struct ipmi_intf *intf)
 		return -1;
 	}
 
-	printf("# of bytes in chassis identifier : %d\n", chassis_id_length_byte & 0x3f);
+	chassis_id_length_in_bytes = chassis_id_length_byte & 0x3f;
+
+	printf("# of bytes in chassis identifier : %d\n", chassis_id_length_in_bytes);
+	for (i = 0; i < chassis_id_length_in_bytes; i++) {
+		printf("Byte %d in id is 0x%x\n", i, rsp->data[2+i]);
+	}
 	return 0;
 }
 
