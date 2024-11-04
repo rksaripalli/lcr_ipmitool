@@ -111,6 +111,7 @@ static struct valstr vita_help_strings[] = {
 		"    led set           - set led state\n"
 		"    getchassisid	   - Get Chassis ID\n"
 		"    setchassisid	   - Set Chassis ID\n"
+		"    setipmbstate      - Set IPMB state\n"
 	},
 	{
 		VITA_CMD_FRUCONTROL,
@@ -188,6 +189,10 @@ static struct valstr vita_help_strings[] = {
 	{
 		VITA_CMD_SET_CHASSIS_ID,
 		"Usage: setchassisid <Sequence of bytes>",
+	},
+	{
+		VITA_CMD_SET_IPMB_STATE,
+		"Usage: setipmbstate Byte0 Byte1 Byte2",
 	},
 	{
 		VITA_CMD_UNKNOWN,
@@ -339,6 +344,60 @@ ipmi_vita_getaddr(struct ipmi_intf *intf, int argc, char **argv)
 		vita_site_types));
 	if (rsp->data_len > 8) {
 		printf("Channel 7 Address: 0x%02x\n", rsp->data[8]);
+	}
+
+	return 0;
+}
+
+/*
+* ipmi_vita_set_ipmb_state
+* Sets the ipmb state
+* Caller must be provide 3 bytes
+*/
+static int
+ipmi_vita_set_ipmb_state(struct ipmi_intf *intf, int num_bytes, char **argv)
+{
+	struct ipmi_rs *rsp;
+	struct ipmi_rq req;
+	unsigned char msg_data[4];
+	unsigned int byte;
+
+	memset(&req, 0, sizeof(req));
+
+	/* we cannot use 0 bytes as identifier for vita 46.11 */
+	if (num_bytes != 3) {
+		lprintf(LOG_ERR, "Please provide IPMB-A state byte IPMB-B state byte and IPMB speed");
+		return -1;
+	}
+
+	msg_data[0] = GROUP_EXT_VITA;
+	sscanf(argv[0], "%x", &byte);
+	msg_data[1] = (unsigned char) byte;
+
+	sscanf(argv[1], "%x", &byte);
+	msg_data[2] = (unsigned char) byte;
+
+	sscanf(argv[2], "%x", &byte);
+	msg_data[3] = (unsigned char) byte;
+
+	req.msg.netfn = IPMI_NETFN_PICMG;
+	req.msg.cmd = VITA_SET_IPMB_STATE_CMD;
+	req.msg.data = msg_data;
+	req.msg.data_len = 4;
+
+	rsp = intf->sendrecv(intf, &req);
+	if (!rsp) {
+		lprintf(LOG_ERR, "No valid response received.");
+		return -1;
+	}
+	else if (rsp->ccode) {
+		lprintf(LOG_ERR, "Invalid completion code received. %s",
+		val2str(rsp->ccode, completion_code_vals));
+		return -1;
+	}	
+	else if (rsp->data[0] != GROUP_EXT_VITA) {
+		lprintf(LOG_ERR, "Invalid group extension %#x", rsp->data[0]);
+		return -1;
 	}
 
 	return 0;
@@ -1217,6 +1276,10 @@ ipmi_vita_main (struct ipmi_intf *intf, int argc, char **argv)
 
 	case VITA_CMD_SET_CHASSIS_ID:
 		rc = ipmi_vita_set_chassis_id(intf, argc-1, &argv[1]);
+		break;
+
+	case VITA_CMD_SET_IPMB_STATE:
+		rc = ipmi_vita_set_ipmb_state(intf, argc-1, &argv[1]);
 		break;
 
 	default:
